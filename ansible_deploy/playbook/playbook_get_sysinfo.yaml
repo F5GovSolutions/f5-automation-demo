@@ -1,0 +1,53 @@
+- name: GET F5 Device Information
+  hosts: all
+  connection: local
+  gather_facts: false
+  serial: 1
+  order: inventory
+
+  vars:
+    provider:
+      user: "{{ lookup('env', 'F5_USERNAME') }}"
+      password: "{{ lookup('env', 'F5_PASSWORD') }}"
+      server: "{{ inventory_hostname }}"
+      validate_certs: false
+      server_port: 443
+
+  tasks:
+    - name: Get system Serial
+      f5networks.f5_modules.bigip_command:
+        commands: 
+          - show /sys hardware | grep "Chassis Serial"
+        provider: "{{ provider }}"
+      delegate_to: localhost
+      register: system_serial
+
+    - name: Get system Model
+      f5networks.f5_modules.bigip_command:
+        commands: 
+          - show /sys hardware field-fmt |  grep -e marketing | grep -v VPR
+        provider: "{{ provider }}"
+      delegate_to: localhost
+      register: system_model
+
+    - name: Get system Version
+      f5networks.f5_modules.bigip_command:
+        commands: 
+          - show /sys version | grep  -e Version -e Build  
+        provider: "{{ provider }}"
+      delegate_to: localhost
+      register: system_version
+
+
+    - name: Print result
+      debug:
+        msg: 
+          - "************************ Device Info ******************************"
+          - "Device Name: {{ inventory_hostname }}"
+          - "Device Serial Number: {{ system_serial.stdout_lines[0] | join(',') | split() | last }}"
+          - "Device Model: {{ system_model.stdout_lines[0] | join(',') | split('marketing-name ') | last }}"
+          - "Device Version: {{system_version.stdout_lines[0] | join(',') | split() | join() | split('Sys::Version,Version') | last | replace('Build', ' Build ') }}"
+          - "*******************************************************************"
+
+    
+

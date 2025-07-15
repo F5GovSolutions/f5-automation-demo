@@ -1,0 +1,15 @@
+virtual:
+    lb: "10.33.88.30" # load balancer IP or host name
+    app: ansible_105 # app name
+    description: "This is a test" # description for virtaul and pool 
+    virtualip: "105.10.11.5" # virtuals IP address
+    port: "443" # port the virtual will listen on 
+    send_string: "GET /index.html" # send string for backend server monitoring
+    recv_string: "200" # recieve string from backend servers
+    members: # pool member IPs 
+      - 4.4.4.4
+      - 5.5.5.5
+
+
+
+

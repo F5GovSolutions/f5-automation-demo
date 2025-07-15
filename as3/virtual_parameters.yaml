@@ -1,0 +1,16 @@
+virtual:
+    lb: "10.33.88.30" # load balancer IP or host name
+    app: as3-test01 # app name
+    description: "This is a test jinja" # description for virtaul and pool 
+    virtual-ip: "103.10.3.100" # virtuals IP address
+    port: "443" # port the virtual will listen on 
+    send_string: "GET /index.html" # send string for backend server monitoring
+    recv_string: "200" # recieve string from backend servers
+    members: # pool member IPs 
+      - 1.1.1.1
+      - 2.2.2.2
+      - 4.4.4.4
+      - 5.5.5.5
+
+
+

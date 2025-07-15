@@ -1,0 +1,58 @@
+---
+
+- name: Create a VIP, pool and pool members
+  hosts: all
+  connection: local
+
+  vars:
+    provider:
+      user: "{{ lookup('env', 'F5_USERNAME') }}"
+      password: "{{ lookup('env', 'F5_PASSWORD') }}"
+      server: "{{ virtual.lb }}"
+      validate_certs: false
+      server_port: 443
+
+  tasks:
+    - name: Create HTTPS monitor
+      f5networks.f5_modules.bigip_monitor_https:
+        name: "m_{{ virtual.app }}"
+        state: present
+        provider: "{{ provider }}"
+        description: "{{ virtual.description }}"
+        send: "{{ virtual.send_string }}"
+        receive: "{{ virtual.recv_string }}" 
+      delegate_to: localhost
+
+    - name: Create pool
+      f5networks.f5_modules.bigip_pool:
+        provider: "{{ provider }}"
+        description: "{{ virtual.description }}"
+        lb_method: ratio-member
+        name: "p_{{ virtual.app }}"
+        monitors:
+          - "m_{{ virtual.app }}"
+      delegate_to: localhost
+
+    - name: Add members to pool
+      f5networks.f5_modules.bigip_pool_member:
+        provider: "{{ provider }}"
+        host: "{{ item }}"
+        pool: "p_{{ virtual.app }}"
+        port: "{{ virtual.port }}"
+      loop:
+        "{{ virtual.members }}"
+      delegate_to: localhost
+
+    - name: Create a VIP
+      f5networks.f5_modules.bigip_virtual_server:
+        provider: "{{ provider }}"
+        description: "{{ virtual.description }}"
+        destination: "{{ virtual.virtualip }}"
+        name: "vs_{{ virtual.app }}"
+        pool: "p_{{ virtual.app }}"
+        port: "{{ virtual.port }}"
+        snat: Automap
+        profiles:
+          - http
+          - clientssl
+      delegate_to: localhost
