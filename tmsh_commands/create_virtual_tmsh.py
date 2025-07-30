@@ -29,7 +29,7 @@ def main():
             description=f"appname: {virtual_config['app']}; {date.today()}; {virtual_config.get('description', '')}",
             vip_port=f"{virtual_config['virtual-ip']}:{virtual_config['port']}",
             members_ip_port=[
-                f"{ip}:{virtual_config['port']}"
+                f"{ip}:{virtual_config['member_port']}"
                 for ip in virtual_config.get("members", [])
             ],
             send_string=virtual_config.get("send_string", ""),

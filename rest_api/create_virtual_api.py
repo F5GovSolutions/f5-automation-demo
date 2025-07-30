@@ -87,10 +87,13 @@ class F5Manager:
         virtual_name = f"{PREFIXES['virtual']}{app_name}"
         pool_name = f"{PREFIXES['pool']}{app_name}"
         monitor_name = f"{PREFIXES['monitor']}{app_name}"
+        clientssl_name = f"clientssl_{app_name}"
+        
 
         # Build member list
         port = input_config["port"]
-        members = [f"{ip}:{port}" for ip in input_config["members"]]
+        member_port = input_config["member_port"]
+        members = [f"{ip}:{member_port}" for ip in input_config["members"]]
 
         # Create description
         description = (
@@ -100,7 +103,15 @@ class F5Manager:
         # Define virtual, pool and monitor configuration
         virtual_config = [
             {
-                "endpoint": "ltm/monitor/https",
+                "endpoint": "ltm/profile/client-ssl",
+                "payload": {
+                    "name": clientssl_name,
+                    "cert": "/Common/demo-cert",
+                    "key": "/Common/demo-cert",
+                },
+            },
+            {
+                "endpoint": "ltm/monitor/http",
                 "payload": {
                     "name": monitor_name,
                     "description": description,
@@ -126,6 +137,12 @@ class F5Manager:
                     "mask": "255.255.255.255",
                     "ipProtocol": "tcp",
                     "pool": pool_name,
+                    "sourceAddressTranslation": {
+                        "type": "automap"
+                    },
+                    "profiles": [
+                        {"name": clientssl_name, "context": "clientside"}
+                    ],
                 },
             },
         ]

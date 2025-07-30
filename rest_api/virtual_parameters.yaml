@@ -1,15 +1,14 @@
 virtual:
-    lb: "10.33.88.30" # load balancer IP or host name
-    app: test-app04 # app name
-    description: "This is a test" # description for virtaul and pool 
-    virtual-ip: "102.10.10.34" # virtuals IP address
-    port: "443" # port the virtual will listen on 
-    send_string: "GET /index.html" # send string for backend server monitoring
+    lb: "10.1.1.4" # load balancer IP or host name
+    app: api-test01 # app name
+    description: "api test" # description for virtaul and pool 
+    virtual-ip: "10.1.20.201" # virtuals IP address
+    port: "443" # port the virtual will listen on
+    member_port: "80" # pool members port
+    send_string: "GET /index.html HTTP/1.1\\r\\nHost: app_server\\r\\nConnection: Close\\r\\n\\r\\n" # send string for backend server monitoring
     recv_string: "200" # recieve string from backend servers
     members: # pool member IPs 
-      - 1.1.1.1
-      - 2.2.2.2
-      - 3.3.3.3
-
+      - 10.1.20.101
+      - 10.1.20.102
 
 

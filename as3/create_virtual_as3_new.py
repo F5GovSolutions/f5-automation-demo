@@ -74,6 +74,7 @@ def main():
 
     create_virtual(input_config["lb"], build_as3_config(input_config))
     as3_config = build_as3_config(input_config)
+    #print(as3_config)
 
 
 if __name__ == "__main__":

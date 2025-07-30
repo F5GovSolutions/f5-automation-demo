@@ -1,14 +1,13 @@
 virtual:
-    app: tmsh-test02 # app name
+    app: tmsh-test01 # app name
     description: "This is a test" # description for virtaul and pool 
-    virtual-ip: "100.100.10.5" # virtuals IP address
-    port: "443" # port the virtual will listen on 
-    send_string: "GET /index.html" # send string for backend server monitoring
-    recv_string: "200" # recieve string from backend servers
+    virtual-ip: "10.1.20.200" # virtuals IP address
+    port: "443" # port the virtual will listen on
+    member_port: "80" # pool members port
+    send_string: "/index.html" # send string for backend server monitoring
+    recv_string: "200 OK" # recieve string from backend servers
     members: # pool member IPs 
-      - 1.1.1.1
-      - 2.2.2.2
-      - 3.3.3.3
-
+      - 10.1.20.101
+      - 10.1.20.102
 
 

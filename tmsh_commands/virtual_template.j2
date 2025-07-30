@@ -1,8 +1,8 @@
 run util bash
 tmsh
 create cli transaction
-create ltm profile client-ssl {{clientssl_name}}  cert default.crt description '{{description}}' key default.key
-create ltm monitor https {{monitor_name}} description '{{description}}' send 'GET {{send_string}}\r\nHost: \r\nUser-Agent: F5-healthcheck\r\nConnection: Close\r\n\r\n' recv '{{recv_string}}'
+create ltm profile client-ssl {{clientssl_name}}  cert demo-cert description '{{description}}' key demo-cert
+create ltm monitor http {{monitor_name}} description '{{description}}' send 'GET {{send_string}} HTTP/1.1\r\nHost: app_server\r\nConnection: Close\r\n\r\n' recv '{{recv_string}}'
 create ltm pool {{pool_name}} description '{{description}}' load-balancing-mode round-robin members add {% raw %}{{% endraw %} {% for member in members_ip_port %} {{member}} {% endfor %} {% raw %}}{% endraw %} monitor {{monitor_name}}
 create ltm virtual {{virtual_name}} description '{{description}}' destination {{vip_port}} pool {{pool_name}} profiles add {% raw %}{{% endraw %} {{clientssl_name}} {% raw %}{{% endraw %} context clientside {% raw %}}{% endraw %} tcp {% raw %}}{% endraw %} source-address-translation { type automap}
 submit cli transaction
